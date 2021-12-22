@@ -405,3 +405,33 @@ def is_critical(player, players, coalition, quota):
     if total_power < quota:
         return True
     return False
+
+def sample(main_ratio, count=7, factor=1.0, scale=1000):
+    """
+    Generates
+
+    Parameters
+    ----------
+    main_ratio    : float
+                    The value of the main player, between 0 and 1.
+    count   : int
+                    The number of remaining players.
+    factor : float
+                    The skew of the weight distribution,
+                    according to the power rule.
+    scale     : int
+                    Necesary for compatibility with other functions.
+                    Defaults to 1000.
+
+    Returns
+    -------
+    players, quota
+                    Can be plugged directly to the other indices
+
+    """
+  assert(factor >= 0 and isintance(factor, float))
+  assert(count > 0 and isintance(factor, int))
+  assert(1 > main_ratio > 0)
+  others = [1 / (i ** factor) for i in range(1,count+1)]
+  others = [sum(others) / (1 - main_ratio) * main_ratio] + others
+  return {i+1: round(v/sum(others)*scale) for i,v in enumerate(others)}, round(sum(a)/2)
